@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BlenderAgentSkillInterface",
+  "description": "Standardized schema for autonomous LLM Agent interaction with the Blender Python (bpy) Engine",
+  "type": "object",
+  "required": ["task_id", "target_blender_version", "render_config", "pipeline_steps"],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique deterministic execution identifier"
+    },
+    "user_intent": {
+      "type": "string",
+      "description": "Natural language prompt or technical brief"
+    },
+    "target_blender_version": {
+      "type": "string",
+      "enum": ["3.6_LTS", "4.0", "4.1", "4.2_LTS", "4.3+"],
+      "default": "4.2_LTS"
+    },
+    "execution_mode": {
+      "type": "string",
+      "enum": ["headless_background", "interactive_viewport", "validation_lint_only"],
+      "default": "headless_background"
+    },
+    "render_config": {
+      "type": "object",
+      "required": ["engine", "resolution_x", "resolution_y", "samples"],
+      "properties": {
+        "engine": {
+          "type": "string",
+          "enum": ["CYCLES", "BLENDER_EEVEE_NEXT", "BLENDER_EEVEE"]
+        },
+        "device": {
+          "type": "string",
+          "enum": ["GPU", "CPU"],
+          "default": "GPU"
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096,
+          "default": 128
+        },
+        "resolution_x": {
+          "type": "integer",
+          "default": 1920
+        },
+        "resolution_y": {
+          "type": "integer",
+          "default": 1080
+        },
+        "frame_start": {
+          "type": "integer",
+          "default": 1
+        },
+        "frame_end": {
+          "type": "integer",
+          "default": 120
+        },
+        "fps": {
+          "type": "integer",
+          "default": 24
+        },
+        "motion_blur": {
+          "type": "boolean",
+          "default": false
+        },
+        "output_format": {
+          "type": "string",
+          "enum": ["PNG", "FFMPEG_H264", "OPEN_EXR", "TIFF"],
+          "default": "PNG"
+        }
+      }
+    },
+    "pipeline_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step_type", "action"],
+        "properties": {
+          "step_type": {
+            "type": "string",
+            "enum": [
+              "scene_cleanup",
+              "procedural_mesh",
+              "shader_node_tree",
+              "lighting_rig",
+              "camera_turntable",
+              "animation_keyframe",
+              "physics_simulation",
+              "render_export"
+            ]
+          },
+          "action": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "execution_log_schema": {
+    "type": "object",
+    "required": ["task_id", "status", "exit_code", "elapsed_seconds"],
+    "properties": {
+      "task_id": { "type": "string" },
+      "status": { "type": "string", "enum": ["SUCCESS", "WARNING", "ERROR"] },
+      "exit_code": { "type": "integer" },
+      "elapsed_seconds": { "type": "number" },
+      "geometry_stats": {
+        "type": "object",
+        "properties": {
+          "total_vertices": { "type": "integer" },
+          "total_faces": { "type": "integer" },
+          "objects_created": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "render_artifacts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string" },
+            "format": { "type": "string" },
+            "frame_range": { "type": "string" }
+          }
+        }
+      },
+      "stdout_lines": { "type": "array", "items": { "type": "string" } },
+      "stderr_lines": { "type": "array", "items": { "type": "string" } }
+    }
+  }
+}

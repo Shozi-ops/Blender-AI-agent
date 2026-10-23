@@ -1,0 +1,6 @@
+{
+  "name": "Blender Python Engine & Agent Skill Architect",
+  "description": "Autonomous Blender Python (bpy) Engine, Headless 3D Pipeline Architect, and Agentic Skill System with Gemini Multi-Modal Intelligence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
